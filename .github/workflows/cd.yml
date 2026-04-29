@@ -1,26 +1,27 @@
 name: CD Pipeline
-
-on:
+'on':
   workflow_run:
-    workflows: ["CI Pipeline"]
-    branches: [main]
+    workflows:
+    - CI Pipeline
+    branches:
+    - main
     types:
-      - completed
-
+    - completed
 jobs:
   on-success:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Pull Docker image
-      run: sudo docker pull demonstrationorg/juvenile:main 
+      run: sudo docker pull demonstrationorg/juvenile:main
     - name: Delete old docker container
       run: sudo docker rm -f juvenile || true
     - name: Run Docker Container
-      run: |
-        sudo docker run -d -p 3000:3000 --name juvenile demonstrationorg/juvenile:main
+      run: 'sudo docker run -d -p 3000:3000 --name juvenile demonstrationorg/juvenile:main
+
+        '
   on-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - run: echo 'The triggering workflow failed'
+    - run: echo 'The triggering workflow failed'
